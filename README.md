@@ -10,17 +10,28 @@ En el data set se dispondra de la información de los torniquetes y se analizar�
 La descripción de los campos según la MTA se encuentra en la web:
 http://web.mta.info/developers/resources/nyct/turnstile/ts_Field_Description.txt
 
-Se disponen de 11 campos: C/A,UNIT,SCP,STATION,LINENAME,DIVISION,DATE,TIME,DESC,ENTRIES,EXITS los cuales se detallan a continuación:
+Se disponen de 11 campos de acuerdo al siguiente detalle:
+
 C/A      = Área de Control
+
 UNIT     = Unidad remota para la estación
+
 SCP      = Posición del canal que representa la dirección específica del dispositivo
+
 STATION  = Nombre de la estación
+
 LINENAME = Líneas que llevan a la estación
+
 DIVISION = Línea original de la estación
+
 DATE     = Fecha (MM-DD-YY)
+
 TIME     = Hora (hh:mm:ss) para el evento de auditoría programado
+
 DESc     = Descripción del evento de auditoría 
+
 ENTRIES  = Registro acumulativo de entradas
+
 EXIST    = Registro acumulativo de salidas
 
 La información se encuentra disponible desde el 25 de mayo del 2010 hasta el 27 de marzo de 2021 en archivos semanales almancenados en un link individual a un archivo .txt
