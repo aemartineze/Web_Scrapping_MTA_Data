@@ -9,6 +9,7 @@ En el data set se dispondra de la información de los torniquetes y se analizar�
 ## Contenido
 La descripción de los campos según la MTA se encuentra en la web:
 http://web.mta.info/developers/resources/nyct/turnstile/ts_Field_Description.txt
+
 Se disponen de 11 campos: C/A,UNIT,SCP,STATION,LINENAME,DIVISION,DATE,TIME,DESC,ENTRIES,EXITS los cuales se detallan a continuación:
 C/A      = Área de Control
 UNIT     = Unidad remota para la estación
