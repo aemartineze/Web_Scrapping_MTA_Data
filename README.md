@@ -37,4 +37,4 @@ EXIST    = Registro acumulativo de salidas
 La información se encuentra disponible desde el 25 de mayo del 2010 hasta el 27 de marzo de 2021 en archivos semanales almancenados en un link individual a un archivo .txt
 
 Para efectos de este trabajo se tomará la información mensual desde el año 2020 para analizar el efecto de la pandemia COVID-19 en los viajes realizados. 
-Se tomarán los archivos de la última semana del mes para calcular el número de pasajeros mensuales en cada estación
+Se tomará la información del primer día del mes para calcular el número de pasajeros mensuales en cada estación.
