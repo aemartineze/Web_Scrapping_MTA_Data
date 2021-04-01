@@ -80,13 +80,13 @@ feb_2020_clean = feb_2020.loc[posic_01]
 posic_01 = ene_2020.loc[:,'DATE'] == '01/01/2020'
 ene_2020_clean = ene_2020.loc[posic_01]
 
-vuelos = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_clean,
+df_mta = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_clean,
                                may_2020_clean, jun_2020_clean, jul_2020_clean, ago_2020_clean,
                                sep_2020_clean, oct_2020_clean, nov_2020_clean, dic_2020_clean,
                                ene_2021_clean, feb_2021_clean, mar_2021_clean],ignore_index=True)
 
 # uniendo los dataframe en uno
-vuelos = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_clean,
+df_mta = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_clean,
                                may_2020_clean, jun_2020_clean, jul_2020_clean, ago_2020_clean,
                                sep_2020_clean, oct_2020_clean, nov_2020_clean, dic_2020_clean,
                                ene_2021_clean, feb_2021_clean, mar_2021_clean],ignore_index=True)
