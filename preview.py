@@ -91,6 +91,30 @@ df_mta = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_cle
                                sep_2020_clean, oct_2020_clean, nov_2020_clean, dic_2020_clean,
                                ene_2021_clean, feb_2021_clean, mar_2021_clean],ignore_index=True)
 
+#Creamos una columna con el indicativo de cada torniquete    
+df_mta['Id_Torniquete'] = df_mta['C/A'] + '-' + df_mta['UNIT'] + '-' + df_mta['SCP']    
+
+#Unimos en una sola columna la fecha y la hora
+df_mta['Fecha'] =  df_mta['DATE'] + " " + df_mta['TIME']
+df_mta.Fecha = pd.to_datetime(df_mta.Fecha)
+
+#Conservamos solo los valores Register de la columna DESC
+df_mta = df_mta[df_mta.DESC != 'RECOVR AUD']
+    
+#Eliminamos las columnas que no son necesarias
+df_mta.drop(['C/A', 'UNIT','SCP','DATE','TIME','DESC'], axis=1, inplace=True)
+
+
+#Escogemos el registro de cada día solo con la hora más temprana
+df_mta_ordenado = df_mta.sort_values(['Id_Torniquete', 'Fecha'])
+df_mta_ordenado = df_mta_ordenado.reset_index(drop = True)
+
+#Agrupamos por torniquete
+df_mta_aggr = df_mta_ordenado.groupby(['Id_Torniquete'])
+
+#Creamos una columna con el calculo de las entradas mensuales
+df_mta_ordenado['Entradas_Tor'] = df_mta_aggr['ENTRIES'].transform(pd.Series.diff)
+
 # guardado el dataset en uno
 path = input("Ingrese el path para guardar el archivo ejemplo C:/Users/richa/Google Drive/TIPOLOGÍA Y CICLO DE VIDA DE LOS DATOS/PRACTICA 1 ")
-vuelos.to_excel(path + '/vuelos.xlsx', header=True, index=False)
+df_mta_ordenado.to_excel(path + '/df_mta.xlsx', header=True, index=False)
