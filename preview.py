@@ -80,10 +80,6 @@ feb_2020_clean = feb_2020.loc[posic_01]
 posic_01 = ene_2020.loc[:,'DATE'] == '01/01/2020'
 ene_2020_clean = ene_2020.loc[posic_01]
 
-df_mta = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_clean,
-                               may_2020_clean, jun_2020_clean, jul_2020_clean, ago_2020_clean,
-                               sep_2020_clean, oct_2020_clean, nov_2020_clean, dic_2020_clean,
-                               ene_2021_clean, feb_2021_clean, mar_2021_clean],ignore_index=True)
 
 # uniendo los dataframe en uno
 df_mta = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_clean,
@@ -102,8 +98,28 @@ df_mta.Fecha = pd.to_datetime(df_mta.Fecha)
 df_mta = df_mta[df_mta.DESC != 'RECOVR AUD']
     
 #Eliminamos las columnas que no son necesarias
-df_mta.drop(['C/A', 'UNIT','SCP','DATE','TIME','DESC'], axis=1, inplace=True)
+df_mta.drop(['C/A', 'UNIT','SCP','TIME'], axis=1, inplace=True)
 
+# creando dataframe para guardar lo limpio
+frame_primera_hora = pd.DataFrame()
+for i in df_mta.Id_Torniquete.unique():  # recorro cada Id unico
+    torniquete = df_mta.loc[:,'Id_Torniquete'] == i
+    torniquete_cl = df_mta.loc[torniquete]  # creo nuevo dataframe solo un torniquete id unico
+    for j in df_mta.DATE.unique():  # recorro cada una de las 14 fechas (strings)
+        fecha_torniquete = torniquete_cl.loc[:,'DATE'] == j
+        fecha_torniquete_cl = torniquete_cl.loc[fecha_torniquete]
+        try:  # cuando no hay dato en esa instancia de fecha
+            fecha_corta = fecha_torniquete_cl.loc[:,'Fecha'] == min(fecha_torniquete_cl.Fecha)
+            final = fecha_torniquete_cl.loc[fecha_corta]
+        except ValueError:
+            continue
+        # concateno cada dataframe que voy sacando
+        frame_primera_hora = frame_primera_hora.append(final, ignore_index=True)
+
+#Eliminamos las columnas que no son necesarias
+frame_primera_hora.drop(['DATE'], axis=1, inplace=True)
+
+###########Edicion Richard: hasta ahi esta el data frame "frame_primera_hora" las primeras fechas 
 
 #Escogemos el registro de cada día solo con la hora más temprana
 df_mta_ordenado = df_mta.sort_values(['Id_Torniquete', 'Fecha'])
