@@ -121,16 +121,9 @@ frame_primera_hora.drop(['DATE'], axis=1, inplace=True)
 
 ###########Edicion Richard: hasta ahi esta el data frame "frame_primera_hora" las primeras fechas 
 
-#Escogemos el registro de cada día solo con la hora más temprana
-df_mta_ordenado = df_mta.sort_values(['Id_Torniquete', 'Fecha'])
-df_mta_ordenado = df_mta_ordenado.reset_index(drop = True)
-
-#Agrupamos por torniquete
-df_mta_aggr = df_mta_ordenado.groupby(['Id_Torniquete'])
-
 #Creamos una columna con el calculo de las entradas mensuales
-df_mta_ordenado['Entradas_Tor'] = df_mta_aggr['ENTRIES'].transform(pd.Series.diff)
+frame_primera_hora['Entradas_Tor'] = frame_primera_hora['ENTRIES']-frame_primera_hora['ENTRIES'].shift(1)
 
 # guardado el dataset en uno
 path = input("Ingrese el path para guardar el archivo ejemplo C:/Users/richa/Google Drive/TIPOLOGÍA Y CICLO DE VIDA DE LOS DATOS/PRACTICA 1 ")
-df_mta_ordenado.to_excel(path + '/df_mta.xlsx', header=True, index=False)
+frame_primera_hora.to_excel(path + '/df_mta.xlsx', header=True, index=False)
