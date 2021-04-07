@@ -4,4 +4,6 @@ Realizar el web Scrapping de la información de los torniquetes administrados po
  - Richard Jácome Guanoluisa
  - Andrea Martínez Espinosa
 ## Archivos
- - 
+ - Codigo_dataset.py
+ - PRA1_web_scrapping_mta.pdf
+ - Registros_torniquetes_MTA.csv
