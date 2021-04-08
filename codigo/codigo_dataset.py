@@ -2,6 +2,8 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+from datetime import datetime, timedelta
+import time
 
 
 
@@ -17,75 +19,40 @@ soup = BeautifulSoup(page.text, "html.parser")
 lista_txt =[]
 for link in soup.find_all("a"):
     lista_txt.append(link.get('href'))
+    
+#Eliminamos valores nulos    
+lista_txt = [x for x in lista_txt if x]
 
-mar_2021 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[40])
-feb_2021 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[44])
-ene_2021 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[49])
-dic_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[53])
-nov_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[57])
-oct_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[62])
-sep_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[66])
-ago_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[70])
-jul_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[75])
-jun_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[79])
-may_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[84])
-abr_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[88])
-mar_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[92])
-feb_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[96])
-ene_2020 = pd.read_csv('http://web.mta.info/developers/'+ lista_txt[101])
+#Filtramos los links de fechas
+lista_txt = [x for x in lista_txt if 'turnstile_' in x]
 
-# limpiando los meses solo tomando el primer día de cada mes
-posic_01 = mar_2021.loc[:,'DATE'] == '03/01/2021'
-mar_2021_clean = mar_2021.loc[posic_01]
-
-posic_01 = feb_2021.loc[:,'DATE'] == '02/01/2021'
-feb_2021_clean = feb_2021.loc[posic_01]
-
-posic_01 = ene_2021.loc[:,'DATE'] == '01/01/2021'
-ene_2021_clean = ene_2021.loc[posic_01]
-
-posic_01 = dic_2020.loc[:,'DATE'] == '12/01/2020'
-dic_2020_clean = dic_2020.loc[posic_01]
-
-posic_01 = nov_2020.loc[:,'DATE'] == '11/01/2020'
-nov_2020_clean = nov_2020.loc[posic_01]
-
-posic_01 = oct_2020.loc[:,'DATE'] == '10/01/2020'
-oct_2020_clean = oct_2020.loc[posic_01]
-
-posic_01 = sep_2020.loc[:,'DATE'] == '09/01/2020'
-sep_2020_clean = sep_2020.loc[posic_01]
-
-posic_01 = ago_2020.loc[:,'DATE'] == '08/01/2020'
-ago_2020_clean = ago_2020.loc[posic_01]
-
-posic_01 = jul_2020.loc[:,'DATE'] == '07/01/2020'
-jul_2020_clean = jul_2020.loc[posic_01]
-
-posic_01 = jun_2020.loc[:,'DATE'] == '06/01/2020'
-jun_2020_clean = jun_2020.loc[posic_01]
-
-posic_01 = may_2020.loc[:,'DATE'] == '05/01/2020'
-may_2020_clean = may_2020.loc[posic_01]
-
-posic_01 = abr_2020.loc[:,'DATE'] == '04/01/2020'
-abr_2020_clean = abr_2020.loc[posic_01]
-
-posic_01 = mar_2020.loc[:,'DATE'] == '03/01/2020'
-mar_2020_clean = mar_2020.loc[posic_01]
-
-posic_01 = feb_2020.loc[:,'DATE'] == '02/01/2020'
-feb_2020_clean = feb_2020.loc[posic_01]
-
-posic_01 = ene_2020.loc[:,'DATE'] == '01/01/2020'
-ene_2020_clean = ene_2020.loc[posic_01]
+#Generamos la lista con los links 
+lista_txt = ['http://web.mta.info/developers/'+x for x in lista_txt]
 
 
-# uniendo los dataframe en uno
-df_mta = pd.concat([ene_2020_clean, feb_2020_clean, mar_2020_clean, abr_2020_clean,
-                               may_2020_clean, jun_2020_clean, jul_2020_clean, ago_2020_clean,
-                               sep_2020_clean, oct_2020_clean, nov_2020_clean, dic_2020_clean,
-                               ene_2021_clean, feb_2021_clean, mar_2021_clean],ignore_index=True)
+#Establecemos un rango de fecha para leer los archivos
+fecha_inicial = datetime(2019,1,1)   
+fecha_final = datetime(2021,3,31)
+rango_fechas = [(fecha_inicial + timedelta(days=d))
+                    for d in range((fecha_final - fecha_inicial).days + 1)] 
+
+#Filtramos solo los sábados
+rango_fechas = [fecha.strftime("%y%m%d") for fecha in rango_fechas if fecha.weekday()  in [5]]
+
+#Filtramos los primeros días de cada mes
+s = pd.Series(pd.to_datetime(rango_fechas, format="%y%m%d"))
+rango_fechas = s.groupby(s.dt.strftime('%y%m')).min().tolist()
+rango_fechas = [dt.strftime('%y%m%d') for dt in rango_fechas]
+
+
+#Filtrar la lista_txt_ en funcion del rango_fechas
+lista_txt_final = [x for x in lista_txt if any(substring in x for substring in rango_fechas)]
+    
+df_mta = pd.DataFrame()
+for fecha in lista_txt_final:
+    aux = pd.read_csv(fecha)
+    time.sleep(2)
+    df_mta = pd.concat([df_mta,aux],ignore_index=True)
 
 #Creamos una columna con el indicativo de cada torniquete    
 df_mta['Id_Torniquete'] = df_mta['C/A'] + '-' + df_mta['UNIT'] + '-' + df_mta['SCP']    
@@ -93,6 +60,10 @@ df_mta['Id_Torniquete'] = df_mta['C/A'] + '-' + df_mta['UNIT'] + '-' + df_mta['S
 #Unimos en una sola columna la fecha y la hora
 df_mta['Fecha'] =  df_mta['DATE'] + " " + df_mta['TIME']
 df_mta.Fecha = pd.to_datetime(df_mta.Fecha)
+
+# limpiando los meses solo tomando el primer día de cada mes
+df_mta = df_mta.loc[df_mta['Fecha'].dt.day == 1]
+
 
 #Conservamos solo los valores Register de la columna DESC
 df_mta = df_mta[df_mta.DESC != 'RECOVR AUD']
@@ -117,13 +88,15 @@ for i in df_mta.Id_Torniquete.unique():  # recorro cada Id unico
         frame_primera_hora = frame_primera_hora.append(final, ignore_index=True)
 
 #Eliminamos las columnas que no son necesarias
-frame_primera_hora.drop(['DATE'], axis=1, inplace=True)
+frame_primera_hora.drop(['DATE', 'DESC'], axis=1, inplace=True)
 
-###########Edicion Richard: hasta ahi esta el data frame "frame_primera_hora" las primeras fechas 
+#Cambiamos los nombres de las columnas
+Registros_torniquetes_MTA = frame_primera_hora
+Registros_torniquetes_MTA.columns=['Estacion','Linea','Division', 'Entradas', 'Salidas', 'Id_Torniquete', 'Fecha'] 
 
-#Creamos una columna con el calculo de las entradas mensuales
-frame_primera_hora['Entradas_Tor'] = frame_primera_hora['ENTRIES']-frame_primera_hora['ENTRIES'].shift(1)
+#Cambiamos el orden de las columnas
+Registros_torniquetes_MTA = Registros_torniquetes_MTA[['Id_Torniquete', 'Fecha', 'Estacion','Linea','Division','Entradas', 'Salidas']]
 
-# guardado el dataset en uno
+#Guardamos el dataset en uno
 path = input("Ingrese el path para guardar el archivo ejemplo C:/Users/richa/Google Drive/TIPOLOGÍA Y CICLO DE VIDA DE LOS DATOS/PRACTICA 1 ")
-frame_primera_hora.to_excel(path + '/df_mta.xlsx', header=True, index=False)
+Registros_torniquetes_MTA.to_csv(path + '/Registros_torniquetes_MTA.csv', header=True, index=False)
