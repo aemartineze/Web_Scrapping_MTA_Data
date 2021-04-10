@@ -10,7 +10,6 @@ pip install pandas
 pip install requests
 pip install bs4
 pip install datetime
-pip install timedelta
 pip install time
 ```
 
