@@ -49,3 +49,4 @@ Para efectos de esta práctica se depuró la información de las columnas por lo
  - codigo/codigo_dataset.py: archivo con código para generar el dataset
  - PRA1_web_scrapping_mta.pdf: repuestas a la práctica
  - Registros_torniquetes_MTA.csv: dataset resultante
+ - DOI Datos: archivo con el link al DOI
